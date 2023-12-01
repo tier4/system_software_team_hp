@@ -1,0 +1,17 @@
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.10.12
+      - run: |
+          pip install mkdocs-material fontawesome_markdown markdown==3.3.7 mdx_truly_sane_lists mkdocs==1.4.3 \
+          mkdocs-awesome-pages-plugin==2.9.1 mkdocs-exclude mkdocs-macros-plugin mkdocs-same-dir mike plantuml-markdown \
+          pymdown-extensions python-markdown-math mkdocs-autorefs
+      - run: mkdocs gh-deploy --force
