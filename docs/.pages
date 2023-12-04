@@ -1,4 +1,5 @@
 nav:
     - Home: index.md
     - Member: member.md
+    - Software: software.md
     - Publications: publications.md
