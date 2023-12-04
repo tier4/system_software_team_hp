@@ -11,7 +11,7 @@ System Software Teamは、自動運転システムに関係するミドルウェ
 
 ## 2023年
 
-### 国際会議
+### 国際会議（査読あり）
 
 1. Yuuki Takano, "Deadlock- and Starvation-free Formally Verified Client Library for Robots", IEEE International Conference on System Reliability and Safety (ICSRS), Nov. 2023, [link](https://github.com/tier4/safe_drive/blob/main/publications/Deadlock-_and_Starvation-free_Formally_Verified_Client_Library_for_Robots_IEEE_ICSRC_2023.pdf)
 1. Atsushi Yano and Takuya Azumi, "RD-Gen: Random DAG Generator Considering Multi-rate Applications for Reproducible Scheduling Evaluation," IEEE International Sympopsium On Real-Time Distributed Computing (ISORC), May 2023
@@ -43,7 +43,7 @@ System Software Teamは、自動運転システムに関係するミドルウェ
 
 1. 高野 祐輝, "ゼロから学ぶRust", 講談社, 2022年12月
 
-### 論文誌
+### 論文誌（査読あり）
 
 1. Atsuko Miyaji, Kaname Watanabe, Yuuki Takano, Kazuhisa Nakasho, Sho Nakamura, Yuntao Wang, and Hiroto Narimatsu, "Privacy-Preserving Distributed Medical Data Integration Security System for Accuracy Assessment of Cancer Screening: Development Study of Novel Data Integration System", JMIR Medical Informatics, Nov. 2022.
 
