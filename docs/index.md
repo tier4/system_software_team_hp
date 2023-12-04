@@ -1,2 +1,63 @@
 # Home
 
+# 対外発表成果
+
+## 2023年
+
+### 国際会議
+
+1. Yuuki Takano, "Deadlock- and Starvation-free Formally Verified Client Library for Robots", IEEE International Conference on System Reliability and Safety (ICSRS), Nov. 2023
+1. Atsushi Yano and Takuya Azumi, "RD-Gen: Random DAG Generator Considering Multi-rate Applications for Reproducible Scheduling Evaluation," IEEE International Sympopsium On Real-Time Distributed Computing (ISORC), May 2023
+1. Tatsuya Kubo and Shinya Takamaeda-Yamazaki, "Cachet: A High-Performance Joint-Subtree Integrity Verification for Secure Non-Volatile Memory", IEEE Symposium on Low-Power and High-Speed Chips and Systems (COOLChips), April 2023
+1. Keisuke Nishimura, Yuichi Sugiyama, Yuki Koike, Masaya Motoda, Tomoya Kitagawa, Toshiki Takatera, and Yuma Kurogome, "RCABench: Open Benchmarking Platform for Root Cause Analysis", Workshop on Binary Analysis Research, Feb. 2023
+
+### 国内研究会
+
+1. 今井航一, 石川 裕, 加藤 真平, "IoT における TEE によるシステムコールの監視・制御とポリシー管理の設計",  2023年並列／分散／協調処理に関するサマー・ワークショップ（SWoPP 2023）, 2023年8月
+1. 久保 龍哉, 藤木 大地, 吉岡 健太郎, 高前田 伸也, ”インメモリ計算向けオープンソースメモリコンパイラの検討”, 2023年並列／分散／協調処理に関するサマー・ワークショップ（SWoPP 2023）, 2023年8月
+1. 尾崎純平, 高野祐輝, 宮地充子, "eBPF検証用の双方向通信フレームワークの提案", 情報処理学会 第194回マルチメディア通信と分散処理・第100回コンピュータセキュリティ合同研究発表会, 2023年3月
+1. 斎藤 文弥、高野 祐輝、宮地 充子, "安全な機能拡張性を持つTEEシェルの実装", 情報処理学会 第194回マルチメディア通信と分散処理・第100回コンピュータセキュリティ合同研究発表会, 2023年3月
+
+### その他発表
+
+1. 高野 祐輝, "Rustでつくるロボットソフトウェア", Rust、何もわからない... #8, 2023年5月
+1. 高野 祐輝, "安全性の高いRustをChatGPTで書いてしまおう", CQ出版 インターフェース 2023年5月号
+1. 高野 祐輝, "質実剛健Rust言語"特集内の記事3本, CQ出版 インターフェース 2023年5月号
+1. 神戸 隆太, "UPPAALによるAutowareの形式検証", TIER IV Computing System Workshop, 2023年3月
+1. 石川 貴大, "Autowareにおけるリソース競合の定量化", TIER IV Computing System Workshop, 2023年3月
+1. 高野 祐輝, "seL4チュートリアル", TIER IV Computing System Workshop, 2023年3月
+1. 高野 祐輝, "safe_drive: ROS2向けのRustクライアントライブラリと形式手法を用いた検証", ROS Japan UG #49 LT大会, 2023年1月
+1. 神戸 隆太, "新卒エンジニア7人がアメリカで自動運転車を体験"
+1. 高野 祐輝, " TIER IV Computing System Workshop 2023を開催しました”
+
+## 2022年
+
+### 書籍
+
+1. 高野 祐輝, "ゼロから学ぶRust", 講談社, 2022年12月
+
+### 論文誌
+
+1. Atsuko Miyaji, Kaname Watanabe, Yuuki Takano, Kazuhisa Nakasho, Sho Nakamura, Yuntao Wang, and Hiroto Narimatsu, "Privacy-Preserving Distributed Medical Data Integration Security System for Accuracy Assessment of Cancer Screening: Development Study of Novel Data Integration System", JMIR Medical Informatics, Nov. 2022.
+
+### 国内研究会
+
+1. 尾崎 純平, 高野 祐輝, 宮地 充子, "eBPFの動作検証用フレームワーク及びデバッガの提案", (CSEC2022-99), 2022年12月
+1. 高野 祐輝, "Rustとモデル検査器を用いたROS2クライアントライブラリの設計と実装および安全性検証", SWEST24, 2022年9月
+1. 斎藤 文弥, 高野 祐輝, 宮地 充子, "Coqで検証可能なTEEシェル基盤の実装", 情報通信システムセキュリティ研究会, (CSEC2022-97), 2022年5月
+
+# 構成員
+
+## 正社員
+
+- 高野 祐輝
+- 石川 貴大
+- 神戸 隆太
+- 矢野 篤志
+- 石田 岳志
+
+## アドバイザー
+
+- 石川 裕
+
+## 学生研究員
