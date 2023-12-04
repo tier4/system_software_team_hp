@@ -18,8 +18,8 @@
 
 ### その他発表
 
+1. 高野 祐輝, "安全性の高いRustをChatGPTで書いてしまおう", CQ出版 インターフェース 2023年12月号
 1. 高野 祐輝, "Rustでつくるロボットソフトウェア", Rust、何もわからない... #8, 2023年5月
-1. 高野 祐輝, "安全性の高いRustをChatGPTで書いてしまおう", CQ出版 インターフェース 2023年5月号
 1. 高野 祐輝, "質実剛健Rust言語"特集内の記事3本, CQ出版 インターフェース 2023年5月号
 1. 神戸 隆太, "新卒エンジニア7人がアメリカで自動運転車を体験", 2023年4月, [link](https://medium.com/tier-iv-tech-blog/76i5yu-70a206605af1)
 1. 高野 祐輝, "TIER IV Computing System Workshop 2023を開催しました”, [link](https://medium.com/tier-iv-tech-blog/4y45tedr65-c5306cab819e)
