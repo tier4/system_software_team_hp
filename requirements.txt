@@ -13,4 +13,3 @@ plantuml-markdown
 pymdown-extensions
 python-markdown-math
 mkdocs-autorefs
-
