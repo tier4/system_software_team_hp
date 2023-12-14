@@ -8,7 +8,7 @@ Make sure that Python pip is installed and run the following.
 
 ```
 pip install -r requirements.txt
-mkdocs build
+mkdocs serve
 ```
 
-The index page should be generated at `site/index.html`.
+MkDocs will provide you a URL that serves the generated page.
