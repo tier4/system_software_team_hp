@@ -12,7 +12,7 @@ R&Dユニット  System Software Team
    :maxdepth: 2
    :caption: Contents:
 
-   documents
    member.md
    publications.md
    software.md
+   documents
