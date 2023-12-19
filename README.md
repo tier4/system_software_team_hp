@@ -8,7 +8,7 @@ Make sure that Python pip is installed and run the following.
 
 ```
 pip install -r requirements.txt
-mkdocs serve
+sphinx-autobuild source build
 ```
 
-MkDocs will provide you a URL that serves the generated page.
+`sphinx-autobuild` will provide you a URL that serves the generated page.
