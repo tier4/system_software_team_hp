@@ -16,10 +16,3 @@ R&Dユニット  System Software Team
    member.md
    publications.md
    software.md
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
