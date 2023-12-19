@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'System Software Team Home Page'
+project = '/TIER IV/R&D UNIT/System Software Team/Home Page'
 copyright = '2023, TIER IV System Software Team'
 author = 'TIER IV System Software Team'
 
