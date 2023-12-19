@@ -5,14 +5,14 @@
 R&Dユニット  System Software Team
 ---------------------------------
 
-System Software Teamは、自動運転システムに関係するミドルウェア、オペレーティングシステムの研究開発を行なっているチームです。
+自動運転システムに関係するミドルウェア、オペレーティングシステムの研究開発を行っています。
 
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   documents.md
+   documents
    member.md
    publications.md
    software.md
