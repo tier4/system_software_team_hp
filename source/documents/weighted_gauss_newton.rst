@@ -33,15 +33,6 @@ Point-set registration とは、これら点群を用いてなんらかの誤差
     &\text{where}\quad\mathbf{r}(\mathbf{p}_{i}, \mathbf{u}_{i};\, \mathbf{\beta}) = R(\mathbf{q}) \cdot \mathbf{p}_{i} + \mathbf{t} - \mathbf{u}_{i}
     \end{align}
 
-:math:`\mathbf{p}_{i}` と :math:`\mathbf{u}_{i}` はパラメータ :math:`\mathbf{\beta}` の変化の影響を受けない値であり、 :math:`n` も最適化のプロセス内では固定値として扱えるので、簡単のために誤差関数を :math:`E_{s}` としてこう表記しておこう。
-
-.. math::
-    \begin{align}
-    E_{s}(\mathbf{\beta}) &= \sum_{i=1}^{n} e_{i}(\mathbf{\beta}) \\[10pt]
-    e_{i}(\mathbf{\beta}) &= || \mathbf{r}_{i}(\mathbf{\beta}) ||^{2} = \mathbf{r}_{i}(\mathbf{\beta})^{\top}\mathbf{r}_{i}(\mathbf{\beta}) \\[10pt]
-    \mathbf{r}_{i}(\mathbf{\beta}) &= R(\mathbf{q}) \cdot \mathbf{p}_{i} + \mathbf{t} - \mathbf{u}_{i}
-    \end{align}
-
 外れ値に対する脆弱性
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -55,13 +46,16 @@ Point-set registration とは、これら点群を用いてなんらかの誤差
 これはある関数 :math:`\rho` を導入することで、平均二乗誤差よりも外れ値の影響を受けにくくする手法である。
 
 .. math::
-    E_{\rho}(\mathbf{\beta}) = \sum_{i=1}^{n} \rho(\tilde{e}_{i}(\mathbf{\beta})),\,\quad\tilde{e}_{i}(\mathbf{\beta}) = \frac{e_{i}(\mathbf{\beta})}{\sigma_{MAD}}
+    E_{\rho}(\mathbf{\beta}) = \sum_{j=1}^{3} \sum_{i=1}^{n} \rho(e_{ij}),\quad
+    e_{ij} = \left[\frac{r_{ij}(\mathbf{\beta})}{{\sigma_{MAD}}_{j}}\right]^{2}
 
-関数 :math:`\rho` はしばしば入力値の標準偏差が1に正規化されていることを仮定する。 :math:`\sigma_{MAD}` は :math:`e_{i}` の標準偏差の推定値であり、これで正規化を行っている。
-また、データに外れ値が含まれていることを仮定するため、標準偏差の計算には外れ値に対して頑強な計算手法が用いられる。詳しくは別項で解説する。
+ここで :math:`r_{ij}(\beta)` は :math:`\mathbf{r}_{i}(\mathbf{\beta})` の :math:`j` 次元目の要素を表している。
+
+関数 :math:`\rho` はしばしば入力値の標準偏差が1に正規化されていることを仮定する。 :math:`{\sigma_{MAD}}_{j}` は :math:`\mathbf{r}` の :math:`j` 次元目の要素の標準偏差の推定値であり、これで :math:`\mathbf{r}` をそれぞれの次元ごとに正規化している。
+データには外れ値が含まれていることを仮定するため、標準偏差の計算には外れ値に対して頑強な計算手法が用いられる。これについては :doc:`別項 <robust_stddev_estimator>` で解説する。
 
 .. math::
-    \sigma_{MAD}=\frac{\operatorname{MAD}}{\Phi^{-1}(\frac{3}{4})},\quad\operatorname{MAD}=\operatorname{median}_{i}(\left|e_{i}−\operatorname{median}_{j}(e_{j})\right|)
+    {\sigma_{MAD}}_{j}=\frac{\operatorname{MAD}_{j}}{\Phi^{-1}(\frac{3}{4})},\quad\operatorname{MAD}_{j}=\operatorname{median}_{i}(\left|r_{ij}−m_{j}\right|), \quad m_{j}=\operatorname{median}_{i}(r_{ij})
 
 :math:`\rho` にはさまざまなものが提案されており、たとえば huber loss
 
@@ -88,7 +82,7 @@ Gauss-Newton法による誤差最小化
 通常のGauss-Newton法と同じ枠組みで誤差最小化を行う。:math:`\mathbf{\beta}_{0}` は初期値として固定されているため、 :math:`\mathbf{\delta}` のみを変動させ、誤差の値の変化を観察すればよい。
 ある値 :math:`\mathbf{\beta}_0` の周辺で関数 :math:`E_{\rho}` を近似し、これを最小化するパラメータ :math:`\mathbf{\beta}_0 + \mathbf{\delta}^{*},\,\mathbf{\delta}^{*} = {\arg\min}_{\mathbf{\delta}}\, E_{\rho}(\mathbf{\beta}_0 + \mathbf{\delta})` を求めよう。
 
-微小な変数 :math:`\Delta \mathbf{\delta}` を導入し、 :math:`E_{\rho}` を微分してその変化を観察することで、:math:`E_{\rho}` を :math:`\mathbf{\beta}_{0}` の周辺で局所的に最小化するパラメータ :math:`\mathbf{\beta}_{0} + \mathbf{\delta}` を見つけることができる。
+微小な変数 :math:`\Delta \mathbf{\delta}` を導入し、 :math:`E_{\rho}` を微分してその変化を観察することで、:math:`E_{\rho}` を :math:`\mathbf{\beta}_{0}` の周辺で局所的に最小化するパラメータ :math:`\mathbf{\beta}_{0} + \mathbf{\delta}^{*}` を見つけることができる。
 
 .. math::
     \begin{align}
@@ -99,25 +93,25 @@ Gauss-Newton法による誤差最小化
     {(\mathbf{\beta}_{0} + \mathbf{\delta} + \Delta\mathbf{\delta}) - (\mathbf{\beta}_{0} + \mathbf{\delta})} \\
     &=
     \lim_{\Delta\mathbf{\delta} \to \mathbf{0}}
-    \sum_{i=1}^{n}
+    \sum_{j=1}^{3}\sum_{i=1}^{n}
     \left[
     \frac
-    {\rho(\tilde{e}_{i}(\mathbf{\beta}_{0} + \mathbf{\delta} + \Delta\mathbf{\delta})) - \rho(\tilde{e}_{i}(\mathbf{\beta}_{0} + \mathbf{\delta}))}
-    {\tilde{e}_{i}(\mathbf{\beta}_{0} + \mathbf{\delta} + \Delta\mathbf{\delta}) - \tilde{e}_{i}(\mathbf{\beta}_{0} + \mathbf{\delta})}
+    {\rho(e_{ij}(\mathbf{\beta}_{0} + \mathbf{\delta} + \Delta\mathbf{\delta})) - \rho(e_{ij}(\mathbf{\beta}_{0} + \mathbf{\delta}))}
+    {e_{ij}(\mathbf{\beta}_{0} + \mathbf{\delta} + \Delta\mathbf{\delta}) - e_{ij}(\mathbf{\beta}_{0} + \mathbf{\delta})}
     \cdot
     \frac
-    {\tilde{e}_{i}(\mathbf{\beta}_{0} + \mathbf{\delta} + \Delta\mathbf{\delta}) - \tilde{e}_{i}(\mathbf{\beta}_{0} + \mathbf{\delta})}
+    {e_{ij}(\mathbf{\beta}_{0} + \mathbf{\delta} + \Delta\mathbf{\delta}) - e_{ij}(\mathbf{\beta}_{0} + \mathbf{\delta})}
     {(\mathbf{\beta}_{0} + \mathbf{\delta} + \Delta\mathbf{\delta}) - (\mathbf{\beta}_{0} + \mathbf{\delta})}
     \right] \\
     &=
     \lim_{\Delta\mathbf{\delta} \to \mathbf{0}}
-    \sum_{i=1}^{n}
+    \sum_{j=1}^{3}\sum_{i=1}^{n}
     \left[
     \frac
-    {\partial \rho}{\partial \tilde{e}_{i}}\Big|_{\tilde{e}_{i}(\mathbf{\beta}_{0} + \mathbf{\delta})}
+    {\partial \rho}{\partial e_{ij}}\Big|_{e_{ij}(\mathbf{\beta}_{0} + \mathbf{\delta})}
     \cdot
     \frac
-    {\tilde{e}_{i}(\mathbf{\beta}_{0} + \mathbf{\delta} + \Delta\mathbf{\delta}) - \tilde{e}_{i}(\mathbf{\beta}_{0} + \mathbf{\delta})}
+    {e_{ij}(\mathbf{\beta}_{0} + \mathbf{\delta} + \Delta\mathbf{\delta}) - e_{ij}(\mathbf{\beta}_{0} + \mathbf{\delta})}
     {\Delta\mathbf{\delta}}
     \right]
     \end{align}
@@ -125,50 +119,45 @@ Gauss-Newton法による誤差最小化
 
 :math:`\frac{\partial E_{\rho}(\mathbf{\beta})}{\partial \mathbf{\beta}}\Big|_{\mathbf{\beta}_{0} + \mathbf{\delta}} = \mathbf{0}` とおけば最適なパラメータ :math:`\mathbf{\beta}_{0} + \mathbf{\delta}^{*}` を導出することができるだろう。
 
-:math:`\mathbf{r}_{i}` の微分を :math:`J_{i}` とおいて、関数 :math:`\tilde{e}_{i}` を近似する。
+:math:`r_{ij}` の微分を :math:`J_{ij}` とおいて、関数 :math:`e_{ij}` を近似する。
 
 .. math::
-    J_{i}(\mathbf{\beta}_{0})
+    J_{ij}(\mathbf{\beta}_{0})
     =
-    \frac{\partial \mathbf{r}_{i}}{\partial \mathbf{\beta}}\Big|_{\mathbf{\beta}_{0}}
-    =
-    \lim_{\Delta\mathbf{\beta} \to \mathbf{0}} \frac{\mathbf{r}_{i}(\mathbf{\beta}_{0} + \Delta\mathbf{\beta}) - \mathbf{r}_{i}(\mathbf{\beta}_{0})}{\Delta\mathbf{\beta}}
+    \frac{\partial r_{ij}}{\partial \mathbf{\beta}}\Big|_{\mathbf{\beta}_{0}}
 
 .. math::
     \begin{align}
-    \tilde{e}_{i}(\mathbf{\beta}_{0} + \Delta\mathbf{\beta})
+    {e}_{ij}(\mathbf{\beta}_{0} + \Delta\mathbf{\beta})
     &=
-    \frac{1}{\sigma_{MAD}} \cdot e_{i}(\mathbf{\beta}_{0} + \Delta\mathbf{\beta}) \\
-    &=
-    \frac{1}{\sigma_{MAD}} \cdot \mathbf{r}_{i}(\mathbf{\beta}_{0} + \Delta\mathbf{\beta})^{\top} \mathbf{r}_{i}(\mathbf{\beta}_{0} + \Delta\mathbf{\beta}) \\
+    \frac{1}{{\sigma_{MAD}}_{j}^{2}} \cdot r_{ij}(\mathbf{\beta}_{0} + \Delta\mathbf{\beta})^{2} \\
     &\approx
-    \frac{1}{\sigma_{MAD}} \cdot \left[
-        \mathbf{r}_{i}(\mathbf{\beta}_{0}) + J_{i}\Delta\mathbf{\beta}]^{\top} [\mathbf{r}_{i}(\mathbf{\beta}_{0}) + J_{i}\Delta\mathbf{\beta}
-    \right] \\
+    \frac{1}{{\sigma_{MAD}}_{j}^{2}} \cdot \left[ r_{ij}(\mathbf{\beta}_{0}) + J_{ij}\Delta\mathbf{\beta}\right]^{2} \\
     &=
-    \frac{1}{\sigma_{MAD}} \cdot \left[\mathbf{r}_{i}(\mathbf{\beta}_{0})^{\top}\mathbf{r}_{i}(\mathbf{\beta}_{0}) +
-    2\Delta\mathbf{\beta}^{\top}J_{i}^{\top}\mathbf{r}_{i}(\mathbf{\beta}_{0}) +
-    \Delta\mathbf{\beta}^{\top}J_{i}^{\top}J_{i}\Delta\mathbf{\beta} \right]
+    \frac{1}{{\sigma_{MAD}}_{j}^{2}} \cdot
+    \left[r_{ij}(\mathbf{\beta}_{0})^{2} +
+    2\Delta\mathbf{\beta}^{\top}J_{ij}^{\top}r_{ij}(\mathbf{\beta}_{0}) +
+    \Delta\mathbf{\beta}^{\top}J_{ij}^{\top}J_{ij}\Delta\mathbf{\beta} \right]
     \end{align}
 
-この結果を利用すると、 :math:`\tilde{e}_{i}` の微分を簡易な式で近似することができる。
+この結果を利用すると、 :math:`e_{ij}` の微分を簡易な式で近似することができる。
 
 .. math::
     \begin{align}
-    &\tilde{e}_{i}(\mathbf{\beta}_{0} + (\mathbf{\delta} + \Delta\mathbf{\delta})) - \tilde{e}_{i}(\mathbf{\beta}_{0} + \mathbf{\delta}) \\
+    &e_{ij}(\mathbf{\beta}_{0} + (\mathbf{\delta} + \Delta\mathbf{\delta})) - e_{ij}(\mathbf{\beta}_{0} + \mathbf{\delta}) \\
     &\approx
-    \frac{1}{\sigma_{MAD}} \cdot
+    \frac{1}{{\sigma_{MAD}}_{j}^{2}} \cdot
     \left\{
-        [\mathbf{r}_{i}(\mathbf{\beta}_{0})^{\top}\mathbf{r}_{i}(\mathbf{\beta}_{0})
-        + 2(\mathbf{\delta} + \Delta \mathbf{\delta})^{\top}J_{i}^{\top}\mathbf{r}_{i}(\mathbf{\beta}_{0})
-        + (\mathbf{\delta} + \Delta \mathbf{\delta})^{\top}J_{i}^{\top}J_{i}(\mathbf{\delta} + \Delta \mathbf{\delta})]
-        - [\mathbf{r}_{i}(\mathbf{\beta}_{0})^{\top}\mathbf{r}_{i}(\mathbf{\beta}_{0})
-        + 2\mathbf{\delta}^{\top}J_{i}^{\top}\mathbf{r}_{i}(\mathbf{\beta}_{0})
-        + \mathbf{\delta}^{\top}J_{i}^{\top}J_{i}\mathbf{\delta}]
+        \left[r_{ij}(\mathbf{\beta}_{0})^{2}
+        + 2(\mathbf{\delta} + \Delta \mathbf{\delta})^{\top}J_{ij}^{\top}r_{ij}(\mathbf{\beta}_{0})
+        + (\mathbf{\delta} + \Delta \mathbf{\delta})^{\top}J_{ij}^{\top}J_{ij}(\mathbf{\delta} + \Delta \mathbf{\delta})\right]
+        - \left[r_{ij}(\mathbf{\beta}_{0})^{2}
+        + 2\mathbf{\delta}^{\top}J_{ij}^{\top}r_{ij}(\mathbf{\beta}_{0})
+        + \mathbf{\delta}^{\top}J_{ij}^{\top}J_{ij}\mathbf{\delta}\right]
     \right\} \\
-    &= \frac{1}{\sigma_{MAD}} \cdot \left[ 2\Delta \mathbf{\delta}^{\top}J_{i}^{\top}\mathbf{r}_{i}(\mathbf{\beta}_{0})
-    + 2\Delta \mathbf{\delta}^{\top}J_{i}^{\top}J_{i}\mathbf{\delta}
-    + \Delta \mathbf{\delta}^{\top}J_{i}^{\top}J_{i}\Delta \mathbf{\delta} \right]
+    &= \frac{1}{{\sigma_{MAD}}_{j}^{2}} \cdot \left[ 2\Delta \mathbf{\delta}^{\top}J_{ij}^{\top}r_{ij}(\mathbf{\beta}_{0})
+    + 2\Delta \mathbf{\delta}^{\top}J_{ij}^{\top}J_{ij}\mathbf{\delta}
+    + \Delta \mathbf{\delta}^{\top}J_{ij}^{\top}J_{ij}\Delta \mathbf{\delta} \right]
     \end{align}
 
 |
@@ -176,69 +165,70 @@ Gauss-Newton法による誤差最小化
 .. math::
     \begin{align}
     \lim_{\Delta\mathbf{\delta} \to \mathbf{0}}
-    \frac{\tilde{e}_{i}(\mathbf{\beta}_{0} + \mathbf{\delta} + \Delta\mathbf{\delta}) - \tilde{e}_{i}(\mathbf{\beta}_{0} + \mathbf{\delta})}{\Delta\mathbf{\delta}}
+    \frac{e_{ij}(\mathbf{\beta}_{0} + \mathbf{\delta} + \Delta\mathbf{\delta}) - e_{ij}(\mathbf{\beta}_{0} + \mathbf{\delta})}{\Delta\mathbf{\delta}}
     &\approx
-    \frac{1}{\sigma_{MAD}} \cdot
+    \frac{1}{{\sigma_{MAD}}_{j}^{2}} \cdot
     \lim_{\Delta\mathbf{\delta} \to \mathbf{0}}
     \frac{
-    2\Delta \mathbf{\delta}^{\top}J_{i}^{\top}\mathbf{r}_{i}(\mathbf{\beta}_{0})
-    + 2\Delta \mathbf{\delta}^{\top}J_{i}^{\top}J_{i}\mathbf{\delta}
-    + \Delta \mathbf{\delta}^{\top}J_{i}^{\top}J_{i}\Delta \mathbf{\delta}}{\Delta\mathbf{\delta}}  \\
+    2\Delta \mathbf{\delta}^{\top}J_{ij}^{\top}r_{ij}(\mathbf{\beta}_{0})
+    + 2\Delta \mathbf{\delta}^{\top}J_{ij}^{\top}J_{ij}\mathbf{\delta}
+    + \Delta \mathbf{\delta}^{\top}J_{ij}^{\top}J_{ij}\Delta \mathbf{\delta}}{\Delta\mathbf{\delta}}  \\
     &=
-    \frac{1}{\sigma_{MAD}} \cdot
+    \frac{1}{{\sigma_{MAD}}_{j}^{2}} \cdot
     \lim_{\Delta\mathbf{\delta} \to \mathbf{0}}
     \left[
-    2J_{i}^{\top}\mathbf{r}_{i}(\mathbf{\beta}_{0})
-    + 2J_{i}^{\top}J_{i}\mathbf{\delta}
-    + J_{i}^{\top}J_{i}\Delta \mathbf{\delta}
+    2J_{ij}^{\top}r_{ij}(\mathbf{\beta}_{0})
+    + 2J_{ij}^{\top}J_{ij}\mathbf{\delta}
+    + J_{ij}^{\top}J_{ij}\Delta \mathbf{\delta}
     \right] \\
     &=
-    \frac{2}{\sigma_{MAD}} \cdot (J_{i}^{\top}\mathbf{r}_{i}(\mathbf{\beta}_{0}) + J_{i}^{\top}J_{i}\mathbf{\delta})
+    \frac{2}{{\sigma_{MAD}}_{j}^{2}} \cdot (J_{ij}^{\top}r_{ij}(\mathbf{\beta}_{0}) + J_{ij}^{\top}J_{ij}\mathbf{\delta})
     \end{align}
 
-結果として、誤差関数の微分は
+さらに :math:`w_{ij} = \frac{\partial \rho}{\partial e_{ij}}\Big|_{e_{ij}(\mathbf{\beta}_{0} + \mathbf{\delta})}` とおくと、誤差関数の微分は
 
 .. math::
     \begin{align}
     \frac{\partial E_{\rho}(\mathbf{\beta})}{\partial \mathbf{\beta}}\Big|_{\mathbf{\beta}_{0} + \mathbf{\delta}}
     &\approx
-    \frac{2}{\sigma_{MAD}} \cdot
-    \sum_{i=1}^{n}
-    \left[
-    \frac
-    {\partial \rho}{\partial \tilde{e}_{i}}\Big|_{\tilde{e}_{i}(\mathbf{\beta}_{0} + \mathbf{\delta})}
+    \sum_{j=1}^{3}\sum_{i=1}^{n}
+    w_{ij}
     \cdot
-    (J_{i}^{\top}\mathbf{r}_{i}(\mathbf{\beta}_{0}) + J_{i}^{\top}J_{i}\mathbf{\delta})
-    \right]
+    \frac{2}{{\sigma_{MAD}}_{j}^{2}}
+    \cdot
+    (J_{ij}^{\top}r_{ij}(\mathbf{\beta}_{0}) + J_{ij}^{\top}J_{ij}\mathbf{\delta})
     \end{align}
 
 となり、これを :math:`\mathbf{0}` とおけば線型方程式が得られる。
 
 .. math::
     \begin{align}
-    \sum_{i=1}^{n}
-    \frac{\partial \rho}{\partial \tilde{e}_{i}}\Big|_{\tilde{e}_{i}(\mathbf{\beta}_{0} + \mathbf{\delta})}
+    \sum_{j=1}^{3}\sum_{i=1}^{n}
+    w_{ij}
     \cdot
-    J_{i}^{\top}\mathbf{r}_{i}(\mathbf{\beta}_{0})
-   =
-    -\sum_{i=1}^{n}
-    \frac{\partial \rho}{\partial \tilde{e}_{i}}\Big|_{\tilde{e}_{i}(\mathbf{\beta}_{0} + \mathbf{\delta})}
+    \frac{2}{{\sigma_{MAD}}_{j}^{2}}
     \cdot
-    J_{i}^{\top}J_{i}\mathbf{\delta}
+    J_{ij}^{\top}r_{ij}(\mathbf{\beta}_{0})
+    =
+    -\sum_{j=1}^{3}\sum_{i=1}^{n}
+    w_{ij}
+    \cdot
+    \frac{2}{{\sigma_{MAD}}_{j}^{2}}
+    \cdot
+    J_{ij}^{\top}J_{ij}\mathbf{\delta}
     \end{align}
 
 .. math::
     \begin{align}
-    b &= \sum_{i=1}^{n}
-    w_{i}
+    b &= \sum_{j=1}^{3}\sum_{i=1}^{n}
+    \frac{w_{ij}}{{\sigma_{MAD}}_{j}^{2}}
     \cdot
-    J_{i}^{\top}\mathbf{r}_{i}(\mathbf{\beta}_{0}) \\
+    J_{ij}^{\top}r_{ij}(\mathbf{\beta}_{0}) \\
     A &=
-    -\sum_{i=1}^{n}
-    w_{i}
+    -\sum_{j=1}^{3}\sum_{i=1}^{n}
+    \frac{w_{ij}}{{\sigma_{MAD}}_{j}^{2}}
     \cdot
-    J_{i}^{\top}J_{i} \\
-    w_{i} &= \frac{\partial \rho}{\partial \tilde{e}_{i}}\Big|_{\tilde{e}_{i}(\mathbf{\beta}_{0} + \mathbf{\delta})} \\
+    J_{ij}^{\top}J_{ij} \\
     A\mathbf{\delta} &= b
     \end{align}
 

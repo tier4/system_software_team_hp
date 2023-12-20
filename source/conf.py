@@ -18,7 +18,9 @@ extensions = []
 templates_path = ['_templates']
 exclude_patterns = []
 
-extensions = ['myst_parser']
+extensions = [
+    'myst_parser',
+    'sphinx.ext.intersphinx']
 
 source_suffix = {
     '.rst': 'restructuredtext',
