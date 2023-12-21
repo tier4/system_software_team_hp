@@ -49,7 +49,7 @@ Point-set registration とは、これら点群を用いてなんらかの誤差
     E_{\rho}(\mathbf{\beta}) = \sum_{j=1}^{3} \sum_{i=1}^{n} \rho(e_{ij}),\quad
     e_{ij} = \left[\frac{r_{ij}(\mathbf{\beta})}{{\sigma_{MAD}}_{j}}\right]^{2}
 
-ここで :math:`r_{ij}(\beta)` は :math:`\mathbf{r}_{i}(\mathbf{\beta})` の :math:`j` 次元目の要素を表している。
+ここで :math:`r_{ij}(\beta)` は :math:`\mathbf{r}(\mathbf{p}_{i}, \mathbf{u}_{i};\, \mathbf{\beta})` の :math:`j` 次元目の要素を表している。
 
 関数 :math:`\rho` はしばしば入力値の標準偏差が1に正規化されていることを仮定する。 :math:`{\sigma_{MAD}}_{j}` は :math:`\mathbf{r}` の :math:`j` 次元目の要素の標準偏差の推定値であり、これで :math:`\mathbf{r}` をそれぞれの次元ごとに正規化している。
 データには外れ値が含まれていることを仮定するため、標準偏差の計算には外れ値に対して頑強な計算手法が用いられる。これについては :doc:`別項 <robust_stddev_estimator>` で解説する。
