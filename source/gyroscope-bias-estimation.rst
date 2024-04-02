@@ -215,3 +215,54 @@ IMU座標系(ボディ座標系)とカメラ座標系の間の回転を :math:`R
    \prod_{k=i}^{j-1}
    \mathrm{Exp}({\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t)) \\
 
+:math:`\mathrm{SO}(3)` の Right Jacobian
+========================================
+
+:math:`\mathrm{SO}(3)` の right Jacobian :math:`J_{r}(\mathbf{\theta})` は次のように計算される。
+
+.. math::
+   J_{r}(\mathbf{\theta})
+   = I
+   - \frac{1 - \cos(||\mathbf{\theta}||)}{||\mathbf{\theta}||^{2}}[\mathbf{\theta}]_{\times}
+   + \frac{||\mathbf{\theta}|| - \sin(||\mathbf{\theta}||)}{||\mathbf{\theta}||^{3}}[\mathbf{\theta}]_{\times}^{2}
+
+
+行列ノルム
+==========
+
+
+:math:`||J_{r}(\mathbf{\theta})||` は :math:`J_{r}(\mathbf{\theta})^{\top}J_{r}(\mathbf{\theta})` の最大固有値の平方根で与えられる。
+
+:math:`k = ||\mathbf{\theta}||` とおいて :math:`J_{r}(\mathbf{\theta})^{\top}J_{r}(\mathbf{\theta})` の固有値を計算する。:math:`[\mathbf{\theta}]_{\times}^{\top} = -[\mathbf{\theta}]_{\times}` より、
+
+.. math::
+    J_{r}(\mathbf{\theta})^{\top}J_{r}(\mathbf{\theta})
+    &= \left(I + \frac{1 + \cos(k)}{k}[\mathbf{\theta}]_{\times} + \frac{k - \sin(k)}{k}[\mathbf{\theta}]_{\times}^{2}\right)
+       \left(I - \frac{1 + \cos(k)}{k}[\mathbf{\theta}]_{\times} + \frac{k - \sin(k)}{k}[\mathbf{\theta}]_{\times}^{2}\right) \\
+    &= I + \left[2\frac{k - \sin(k)}{k^{3}} - \left(\frac{1 - \cos(k)}{k^{2}}\right)^{2}\right][\mathbf{\theta}]_{\times}^{2}
+    + \left[\frac{k - \sin(k)}{k^{3}}\right]^{2}[\mathbf{\theta}]_{\times}^{4} \\
+
+関係性 :math:`[\mathbf{\theta}]_{\times}^{4} = -k^{2}[\mathbf{\theta}]_{\times}^{2}` を用いると、
+
+.. math::
+    J_{r}(\mathbf{\theta})^{\top}J_{r}(\mathbf{\theta}) = I + \frac{1}{k^{4}}\left(k - 2 + 2\cos(k)\right) [\mathbf{\theta}]_{\times}^{2} \\
+
+が得られる。この固有値 :math:`\lambda` は
+
+.. math::
+    \det(J_{r}(\mathbf{\theta})^{\top}J_{r}(\mathbf{\theta}) - \lambda I)
+    &= -\frac{1}{k^{8}}(\lambda - 1)\left[2k^{2}\cos(t) - 2k^{2} + k^{4}\lambda\right]^{2} \\
+    &= 0
+
+の解として与えられ、結果として
+
+.. math::
+   \lambda = 1,\;\frac{2}{k^{2}}(1-\cos(k))
+
+が得られる。なお、 :math:`\frac{2}{k^{2}}(1-\cos(k))` は :math:`k = 0` において最大値 :math:`1` をとる。
+
+以上より、 :math:`J_{r}(\mathbf{\theta})^{\top}J_{r}(\mathbf{\theta})` の最大固有値が :math:`1` であることから :math:`||J_{r}(\mathbf{\theta})|| = 1` であり、この結果を利用して :math:`||J_{r}(\mathbf{\theta})\mathbf{x}||` の上界を与えることができる。
+
+.. math::
+    \forall\mathbf{x} \in \mathrm{R}^{3},\; ||J_{r}(\mathbf{\theta})\mathbf{x}|| \leq ||J_{r}(\mathbf{\theta})|| \cdot ||\mathbf{x}|| = ||\mathbf{x}||
+
