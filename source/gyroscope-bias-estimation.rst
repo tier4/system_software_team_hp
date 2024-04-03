@@ -215,6 +215,53 @@ IMU座標系(ボディ座標系)とカメラ座標系の間の回転を :math:`R
    \prod_{k=i}^{j-1}
    \mathrm{Exp}({\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t)) \\
 
+さて、任意の :math:`\mathbf{x}\in\mathrm{R}^{3}` に対して :math:`||J_{r}(\hat{\mathbf{\omega}}^{m}_{k})\mathbf{x}|| \leq ||\mathbf{x}||` となる(参考: `行列ノルム`_)ので、次が成り立つ。
+
+.. math::
+   ||{\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t|| = ||J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t|| \leq ||\Delta \hat{\mathbf{b}}^{\omega} \Delta t||
+
+また、 :math:`\mathbf{a}, \mathbf{b} \in \mathrm{R}^{3}` について、これらのノルムが十分に小さいとき、次が成り立つ
+
+.. math::
+    \mathrm{Log}(\mathrm{Exp}(\mathbf{a} + \mathbf{b})) = \mathbf{a} + \mathbf{b} + O(||\mathbf{a}||^{2}, ||\mathbf{b}||^{2})
+
+したがって、 :math:`||\Delta \hat{\mathbf{b}}^{\omega} \Delta t||` が十分に小さいならば、残差 :math:`\mathbf{r}_{ij}` をさらに次のように近似できる。
+
+.. math::
+    \mathbf{r}_{ij}(\hat{\mathbf{b}}^{\omega} + \Delta \hat{\mathbf{b}}^{\omega})
+   &\approx
+   \mathrm{Log}({R^{i}_{WB}}^{\top} \cdot R^{j}_{WB} \cdot \hat{R}^{m}_{i,j-1} \cdot
+   \mathrm{Exp}(\sum_{k=i}^{j-1} {\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t)) \\
+
+ベクトル :math:`\mathbf{a} \in \mathbb{R}^{3}` と微小量 :math:`\Delta \mathbf{a} \in \mathbb{R}^{3}` の間には次の関係が成り立つ。
+
+.. math::
+   \mathrm{Log}(\mathrm{Exp}(\mathbf{a})\mathrm{Exp}(\Delta \mathbf{a})) = \mathbf{a} + J_{r}^{-1}(\mathbf{a})\Delta \mathbf{a}
+
+:math:`\mathbf{\xi}_{ij} = \mathrm{Log}({R^{i}_{WB}}^{\top} \cdot R^{j}_{WB} \cdot \hat{R}^{m}_{i,j-1})` としてこの関係性を利用すると、Gauss-Newton 法の Jacobian が導出できる。
+
+.. math::
+    \mathbf{r}_{ij}(\hat{\mathbf{b}}^{\omega} + \Delta \hat{\mathbf{b}}^{\omega})
+   &\approx
+   \mathrm{Log}(\mathrm{Exp}(\mathbf{\xi}_{ij}) \cdot
+   \mathrm{Exp}(\sum_{k=i}^{j-1} {\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t)) \\
+   &\approx
+   \mathbf{\xi}_{ij} +
+   J_{r}^{-1}(\mathbf{\xi}_{ij})\left[
+   \sum_{k=i}^{j-1} {\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t
+   \right ] \\
+   &=
+   \mathbf{\xi}_{ij} +
+   \Delta t \cdot J_{r}^{-1}(\mathbf{\xi}_{ij}) \left[
+   \sum_{k=i}^{j-1} {\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{k})
+   \right ] \cdot \Delta \hat{\mathbf{b}}^{\omega}  \\
+   &=
+   \mathbf{\xi}_{ij} +
+   J_{ij} \cdot \Delta \hat{\mathbf{b}}^{\omega}, \\
+   \text{where} \;\; J_{ij} &=  \Delta t \cdot J_{r}^{-1}(\mathbf{\xi}_{ij}) \left[
+   \sum_{k=i}^{j-1} {\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{k})
+   \right]
+
 :math:`\mathrm{SO}(3)` の Right Jacobian
 ========================================
 
@@ -227,8 +274,10 @@ IMU座標系(ボディ座標系)とカメラ座標系の間の回転を :math:`R
    + \frac{||\mathbf{\theta}|| - \sin(||\mathbf{\theta}||)}{||\mathbf{\theta}||^{3}}[\mathbf{\theta}]_{\times}^{2}
 
 
+.. _行列ノルム:
+
 行列ノルム
-==========
+~~~~~~~~~~
 
 
 :math:`||J_{r}(\mathbf{\theta})||` は :math:`J_{r}(\mathbf{\theta})^{\top}J_{r}(\mathbf{\theta})` の最大固有値の平方根で与えられる。
