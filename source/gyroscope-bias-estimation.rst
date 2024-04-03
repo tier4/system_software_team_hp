@@ -130,10 +130,10 @@ IMU座標系(ボディ座標系)とカメラ座標系の間の回転を :math:`R
 
 が成立する。したがって、式 :eq:`error-function` の :math:`\mathrm{Exp}` の積に対して指数法則を適用することができない。
 
-| 一方で、一般に :math:`||\mathbf{b}||^{2}` が小さいとき
+| 一方で、一般に :math:`||\mathbf{b}||` が小さいとき、リー代数の和の指数写像は次のように近似できる
 
 .. math::
-   \mathrm{Exp}(\mathbf{a} + \mathbf{b}) = \mathrm{Exp}(\mathbf{a}) \cdot \mathrm{Exp}(J_{r}(\mathbf{a}) \cdot \mathbf{b})
+   \mathrm{Exp}(\mathbf{a} + \mathbf{b}) \approx \mathrm{Exp}(\mathbf{a}) \cdot \mathrm{Exp}(J_{r}(\mathbf{a}) \cdot \mathbf{b})
 
 が成立する。ここで :math:`J_{r}` は right Jacobian と呼ばれるものであり、解析的に計算できる。
 
@@ -141,13 +141,13 @@ IMU座標系(ボディ座標系)とカメラ座標系の間の回転を :math:`R
 
 .. math::
    \mathbf{r}_{ij}(\hat{\mathbf{b}}^{\omega} + \Delta \hat{\mathbf{b}}^{\omega})
-   = \mathrm{Log}({R^{i}_{WB}}^{\top} \cdot R^{j}_{WB} \cdot \prod^{j-1}_{k=i}\mathrm{Exp}(\hat{\mathbf{\omega}}^{m}_{k})\cdot \mathrm{Exp}(J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t))
+   \approx \mathrm{Log}({R^{i}_{WB}}^{\top} \cdot R^{j}_{WB} \cdot \prod^{j-1}_{k=i}\mathrm{Exp}(\hat{\mathbf{\omega}}^{m}_{k})\cdot \mathrm{Exp}(J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t))
 
 と書ける。読みやすさのために :math:`\hat{R}^{m}_{k} = \mathrm{Exp}(\hat{\mathbf{\omega}}^{m}_{k})` とおこう。
 
 .. math::
    \mathbf{r}_{ij}(\hat{\mathbf{b}}^{\omega} + \Delta \hat{\mathbf{b}}^{\omega})
-   = \mathrm{Log}({R^{i}_{WB}}^{\top} \cdot R^{j}_{WB} \cdot \prod^{j-1}_{k=i} \left[ \hat{R}^{m}_{k} \cdot \mathrm{Exp}(J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \right])
+   \approx \mathrm{Log}({R^{i}_{WB}}^{\top} \cdot R^{j}_{WB} \cdot \prod^{j-1}_{k=i} \left[ \hat{R}^{m}_{k} \cdot \mathrm{Exp}(J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \right])
 
 
 さて、 :math:`\mathrm{Exp}` には次の面白い性質がある。
@@ -209,7 +209,7 @@ IMU座標系(ボディ座標系)とカメラ座標系の間の回転を :math:`R
 
 .. math::
     \mathbf{r}_{ij}(\hat{\mathbf{b}}^{\omega} + \Delta \hat{\mathbf{b}}^{\omega})
-   &= \mathrm{Log}({R^{i}_{WB}}^{\top} \cdot R^{j}_{WB} \cdot \prod^{j-1}_{k=i} \left[ \hat{R}^{m}_{k} \cdot \mathrm{Exp}(J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \right]) \\
+   &\approx \mathrm{Log}({R^{i}_{WB}}^{\top} \cdot R^{j}_{WB} \cdot \prod^{j-1}_{k=i} \left[ \hat{R}^{m}_{k} \cdot \mathrm{Exp}(J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \right]) \\
    &=
    \mathrm{Log}({R^{i}_{WB}}^{\top} \cdot R^{j}_{WB} \cdot \hat{R}^{m}_{i,j-1} \cdot
    \prod_{k=i}^{j-1}
