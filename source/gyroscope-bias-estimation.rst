@@ -245,13 +245,13 @@ IMU座標系(ボディ座標系)とカメラ座標系の間の回転を :math:`R
 関係性 :math:`[\mathbf{\theta}]_{\times}^{4} = -k^{2}[\mathbf{\theta}]_{\times}^{2}` を用いると、
 
 .. math::
-    J_{r}(\mathbf{\theta})^{\top}J_{r}(\mathbf{\theta}) = I + \frac{1}{k^{4}}\left(k^2 - 2 + 2\cos(k)\right) [\mathbf{\theta}]_{\times}^{2} \\
+    J_{r}(\mathbf{\theta})^{\top}J_{r}(\mathbf{\theta}) = I + \frac{1}{k^{4}}\left(k^2 + 2\cos(k)- 2 \right) [\mathbf{\theta}]_{\times}^{2} \\
 
 が得られる。この固有値 :math:`\lambda` は
 
 .. math::
     \det(J_{r}(\mathbf{\theta})^{\top}J_{r}(\mathbf{\theta}) - \lambda I)
-    &= -\frac{1}{k^{8}}(\lambda - 1)\left[2k^{2}\cos(t) - 2k^{2} + k^{4}\lambda\right]^{2} \\
+    &= -\frac{1}{k^{4}}(\lambda - 1)\left[k^{2}\lambda + 2\cos(t) - 2\right]^{2} \\
     &= 0
 
 の解として与えられ、結果として
