@@ -1,5 +1,15 @@
 # Publications
 
+## 2024年
+
+### 論文誌（査読あり）
+
+1. Sai Veerya Mahadevan, Yuuki Takano, and Atsuko Miyaji, "PRSafe: A Domain Specific Language Created with LLVM", IPSJ, Electronic Preprint for Journal of Information Processing Vol.32, Feb. 2024
+
+### 国内研究会
+
+1. Joe Hattori, Yuuki Takano, and Naoki Kobayashi, "Towards Automatic Verification of Concurrency Memory Bug Freeness of Linux Kernel Modules by Transpilation to PlusCal", 研究報告システムソフトウェアとオペレーティング・システム（OS）, Feb. 2024
+
 ## 2023年
 
 ### 国際会議（査読あり）
