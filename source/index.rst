@@ -16,3 +16,5 @@ R&Dユニット  System Software Team
    publications.md
    software.md
    documents
+   imu_preintegration
+   gyroscope-bias-estimation
