@@ -16,3 +16,4 @@ R&Dユニット  System Software Team
    publications.md
    software.md
    documents
+   gyroscope-bias-estimation

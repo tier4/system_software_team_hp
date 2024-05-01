@@ -86,7 +86,7 @@ IMU座標系(ボディ座標系)とカメラ座標系の間の回転を :math:`R
 
 .. math::
     E_{ij}(\hat{\mathbf{b}}^{\omega}) &= || \mathbf{r}_{ij}(\hat{\mathbf{b}}^{\omega}) ||^{2}, \\
-    \mathbf{r}_{ij}(\hat{\mathbf{b}}^{\omega}) &= \mathrm{Log}({R^{i}_{WB}}^{\top} \cdot R^{j}_{WB} \cdot \prod^{j-1}_{k=i}\mathrm{Exp}((\mathbf{\omega}^{m}_{k} - \hat{\mathbf{b}}^{\omega}) \Delta t))
+    \mathbf{r}_{ij}(\hat{\mathbf{b}}^{\omega}) &= \mathrm{Log}({R^{j}_{WB}}^{\top} \cdot R^{i}_{WB} \cdot \prod^{j-1}_{k=i}\mathrm{Exp}((\mathbf{\omega}^{m}_{k} - \hat{\mathbf{b}}^{\omega}) \Delta t))
 
 なお、真の角速度バイアス :math:`\mathbf{b}^{\omega}` と区別するため、ここでは角速度バイアスの推定値を :math:`\hat{\mathbf{b}}^{\omega}` と表記している。
 
@@ -107,14 +107,15 @@ IMU座標系(ボディ座標系)とカメラ座標系の間の回転を :math:`R
 
 .. math::
    \mathbf{r}_{ij}(\hat{\mathbf{b}}^{\omega} + \Delta \hat{\mathbf{b}}^{\omega})
-   = \mathrm{Log}({R^{i}_{WB}}^{\top} \cdot R^{j}_{WB} \cdot \prod^{j-1}_{k=i} \mathrm{Exp}([\mathbf{\omega}^{m}_{k} - (\hat{\mathbf{b}}^{\omega} + \Delta \hat{\mathbf{b}}^{\omega})] \Delta t))
+   = \mathrm{Log}({R^{j}_{WB}}^{\top} \cdot R^{i}_{WB} \cdot \prod^{j-1}_{k=i} \mathrm{Exp}([\mathbf{\omega}^{m}_{k} - (\hat{\mathbf{b}}^{\omega} + \Delta \hat{\mathbf{b}}^{\omega})] \Delta t))
    :label: error-function
 
 表記の煩雑さを低減するため、 :math:`\hat{\mathbf{\omega}}^{m}_{k} = \mathbf{\omega}^{m}_{k} - \hat{\mathbf{b}}^{\omega}` とおく。
 
 .. math::
    \mathbf{r}_{ij}(\hat{\mathbf{b}}^{\omega} + \Delta \hat{\mathbf{b}}^{\omega})
-   = \mathrm{Log}({R^{i}_{WB}}^{\top} \cdot R^{j}_{WB} \cdot \prod^{j-1}_{k=i}\mathrm{Exp}([\hat{\mathbf{\omega}}^{m}_{k} - \Delta \hat{\mathbf{b}}^{\omega}] \Delta t))
+   &= \mathrm{Log}({R^{j}_{WB}}^{\top} \cdot R^{i}_{WB} \cdot \prod^{j-1}_{k=i}\mathrm{Exp}([\hat{\mathbf{\omega}}^{m}_{k} - \Delta \hat{\mathbf{b}}^{\omega}] \Delta t)) \\
+   &= \mathrm{Log}({R^{j}_{WB}}^{\top} \cdot R^{i}_{WB} \cdot \prod^{j-1}_{k=i}\mathrm{Exp}(\hat{\mathbf{\omega}}^{m}_{k}\Delta t - \Delta \hat{\mathbf{b}}^{\omega} \Delta t))
 
 さて、行列の指数関数には一般に指数法則が成立しない。n次元ベクトル :math:`\mathbf{a}, \mathbf{b} \in \mathbb{R}^{n}` について、一般に
 
@@ -141,13 +142,13 @@ IMU座標系(ボディ座標系)とカメラ座標系の間の回転を :math:`R
 
 .. math::
    \mathbf{r}_{ij}(\hat{\mathbf{b}}^{\omega} + \Delta \hat{\mathbf{b}}^{\omega})
-   \approx \mathrm{Log}({R^{i}_{WB}}^{\top} \cdot R^{j}_{WB} \cdot \prod^{j-1}_{k=i}\mathrm{Exp}(\hat{\mathbf{\omega}}^{m}_{k})\cdot \mathrm{Exp}(J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t))
+   \approx \mathrm{Log}({R^{j}_{WB}}^{\top} \cdot R^{i}_{WB} \cdot \prod^{j-1}_{k=i}\mathrm{Exp}(\hat{\mathbf{\omega}}^{m}_{k} \Delta t)\cdot \mathrm{Exp}(-J_{r}(\hat{\mathbf{\omega}}^{m}_{k} \Delta t) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t))
 
-と書ける。読みやすさのために :math:`\hat{R}^{m}_{k} = \mathrm{Exp}(\hat{\mathbf{\omega}}^{m}_{k})` とおこう。
+と書ける。読みやすさのために :math:`\hat{R}^{m}_{k} = \mathrm{Exp}(\hat{\mathbf{\omega}}^{m}_{k} \Delta t), \; \hat{\mathbf{\theta}}^{m}_{k} = \hat{\mathbf{\omega}}^{m}_{k} \Delta t` とおこう。
 
 .. math::
    \mathbf{r}_{ij}(\hat{\mathbf{b}}^{\omega} + \Delta \hat{\mathbf{b}}^{\omega})
-   \approx \mathrm{Log}({R^{i}_{WB}}^{\top} \cdot R^{j}_{WB} \cdot \prod^{j-1}_{k=i} \left[ \hat{R}^{m}_{k} \cdot \mathrm{Exp}(J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \right])
+   \approx \mathrm{Log}({R^{j}_{WB}}^{\top} \cdot R^{i}_{WB} \cdot \prod^{j-1}_{k=i} \left[ \hat{R}^{m}_{k} \cdot \mathrm{Exp}(-J_{r}(\hat{\mathbf{\theta}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \right])
 
 
 さて、 :math:`\mathrm{Exp}` には次の面白い性質がある。
@@ -167,58 +168,58 @@ IMU座標系(ボディ座標系)とカメラ座標系の間の回転を :math:`R
 例として、 :math:`i=1, j=5` の場合を示そう。
 
 .. math::
-   &\prod^{4}_{k=1}\hat{R}^{m}_{k} \cdot \mathrm{Exp}(J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \\\\
+   &\prod^{4}_{k=1}\hat{R}^{m}_{k} \cdot \mathrm{Exp}(-J_{r}(\hat{\mathbf{\theta}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \\\\
    =
    & \hat{R}^{m}_{1} \cdot \\
-   & \mathrm{Exp}(J_{r}(\hat{\mathbf{\omega}}^{m}_{1}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \hat{R}^{m}_{2} \cdot \\
-   & \mathrm{Exp}(J_{r}(\hat{\mathbf{\omega}}^{m}_{2}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \hat{R}^{m}_{3} \cdot \\
-   & \mathrm{Exp}(J_{r}(\hat{\mathbf{\omega}}^{m}_{3}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \hat{R}^{m}_{4} \cdot \\
-   & \mathrm{Exp}(J_{r}(\hat{\mathbf{\omega}}^{m}_{4}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \\\\
+   & \mathrm{Exp}(-J_{r}(\hat{\mathbf{\theta}}^{m}_{1}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \hat{R}^{m}_{2} \cdot \\
+   & \mathrm{Exp}(-J_{r}(\hat{\mathbf{\theta}}^{m}_{2}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \hat{R}^{m}_{3} \cdot \\
+   & \mathrm{Exp}(-J_{r}(\hat{\mathbf{\theta}}^{m}_{3}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \hat{R}^{m}_{4} \cdot \\
+   & \mathrm{Exp}(-J_{r}(\hat{\mathbf{\theta}}^{m}_{4}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \\\\
    =
    & \hat{R}^{m}_{1} \cdot \hat{R}^{m}_{2} \cdot \\
-   & \mathrm{Exp}({\hat{R}^{m}_{2}}^{\top} \cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{1}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \hat{R}^{m}_{3} \cdot \\
-   & \mathrm{Exp}({\hat{R}^{m}_{3}}^{\top} \cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{2}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \hat{R}^{m}_{4} \cdot \\
-   & \mathrm{Exp}({\hat{R}^{m}_{4}}^{\top} \cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{3}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \\
-   & \mathrm{Exp}(J_{r}(\hat{\mathbf{\omega}}^{m}_{4}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \\\\
+   & \mathrm{Exp}(-{\hat{R}^{m}_{2}}^{\top} \cdot J_{r}(\hat{\mathbf{\theta}}^{m}_{1}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \hat{R}^{m}_{3} \cdot \\
+   & \mathrm{Exp}(-{\hat{R}^{m}_{3}}^{\top} \cdot J_{r}(\hat{\mathbf{\theta}}^{m}_{2}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \hat{R}^{m}_{4} \cdot \\
+   & \mathrm{Exp}(-{\hat{R}^{m}_{4}}^{\top} \cdot J_{r}(\hat{\mathbf{\theta}}^{m}_{3}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \\
+   & \mathrm{Exp}(-J_{r}(\hat{\mathbf{\theta}}^{m}_{4}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \\\\
    =
    & \hat{R}^{m}_{1} \cdot \hat{R}^{m}_{2} \cdot \hat{R}^{m}_{3} \cdot \\
-   & \mathrm{Exp}({\hat{R}^{m}_{3}}^{\top} \cdot {\hat{R}^{m}_{2}}^{\top} \cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{1}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \hat{R}^{m}_{4} \cdot \\
-   & \mathrm{Exp}({\hat{R}^{m}_{4}}^{\top} \cdot {\hat{R}^{m}_{3}}^{\top} \cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{2}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \\
-   & \mathrm{Exp}({\hat{R}^{m}_{4}}^{\top} \cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{3}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \\
-   & \mathrm{Exp}(J_{r}(\hat{\mathbf{\omega}}^{m}_{4}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \\\\
+   & \mathrm{Exp}(-{\hat{R}^{m}_{3}}^{\top} \cdot {\hat{R}^{m}_{2}}^{\top} \cdot J_{r}(\hat{\mathbf{\theta}}^{m}_{1}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \hat{R}^{m}_{4} \cdot \\
+   & \mathrm{Exp}(-{\hat{R}^{m}_{4}}^{\top} \cdot {\hat{R}^{m}_{3}}^{\top} \cdot J_{r}(\hat{\mathbf{\theta}}^{m}_{2}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \\
+   & \mathrm{Exp}(-{\hat{R}^{m}_{4}}^{\top} \cdot J_{r}(\hat{\mathbf{\theta}}^{m}_{3}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \\
+   & \mathrm{Exp}(-J_{r}(\hat{\mathbf{\theta}}^{m}_{4}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \\\\
    =
    & \hat{R}^{m}_{1} \cdot \hat{R}^{m}_{2} \cdot \hat{R}^{m}_{3} \cdot \hat{R}^{m}_{4} \cdot \\
-   & \mathrm{Exp}({\hat{R}^{m}_{4}}^{\top} \cdot {\hat{R}^{m}_{3}}^{\top} \cdot {\hat{R}^{m}_{2}}^{\top} \cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{1}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \\
-   & \mathrm{Exp}({\hat{R}^{m}_{4}}^{\top} \cdot {\hat{R}^{m}_{3}}^{\top} \cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{2}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \\
-   & \mathrm{Exp}({\hat{R}^{m}_{4}}^{\top} \cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{3}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \\
-   & \mathrm{Exp}(J_{r}(\hat{\mathbf{\omega}}^{m}_{4}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t)
+   & \mathrm{Exp}(-{\hat{R}^{m}_{4}}^{\top} \cdot {\hat{R}^{m}_{3}}^{\top} \cdot {\hat{R}^{m}_{2}}^{\top} \cdot J_{r}(\hat{\mathbf{\theta}}^{m}_{1}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \\
+   & \mathrm{Exp}(-{\hat{R}^{m}_{4}}^{\top} \cdot {\hat{R}^{m}_{3}}^{\top} \cdot J_{r}(\hat{\mathbf{\theta}}^{m}_{2}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \\
+   & \mathrm{Exp}(-{\hat{R}^{m}_{4}}^{\top} \cdot J_{r}(\hat{\mathbf{\theta}}^{m}_{3}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \cdot \\
+   & \mathrm{Exp}(-J_{r}(\hat{\mathbf{\theta}}^{m}_{4}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t)
 
 このようにして、 :math:`\Delta \hat{\mathbf{b}}^{\omega}` に依存する部分とそうでない部分を分離することができる。
 
 一般的に書けば次のようになる。
 
 .. math::
-   \prod^{j-1}_{k=i}\hat{R}^{m}_{k} \cdot \mathrm{Exp}(J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t)
+   \prod^{j-1}_{k=i}\hat{R}^{m}_{k} \cdot \mathrm{Exp}(-J_{r}(\hat{\mathbf{\theta}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t)
    &=
    \hat{R}^{m}_{i,j-1}
    \prod_{k=i}^{j-1}
-   \mathrm{Exp}({\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t), \\
+   \mathrm{Exp}(-{\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\theta}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t), \\
    &\text{where} \;\; \hat{R}^{m}_{k,j-1} = \prod^{j-1}_{l=k} \hat{R}^{m}_{l}
 
 以上の結果を利用すれば、残差 :math:`\mathbf{r}_{ij}` は次のようになる。
 
 .. math::
     \mathbf{r}_{ij}(\hat{\mathbf{b}}^{\omega} + \Delta \hat{\mathbf{b}}^{\omega})
-   &\approx \mathrm{Log}({R^{i}_{WB}}^{\top} \cdot R^{j}_{WB} \cdot \prod^{j-1}_{k=i} \left[ \hat{R}^{m}_{k} \cdot \mathrm{Exp}(J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \right]) \\
+   &\approx \mathrm{Log}({R^{j}_{WB}}^{\top} \cdot R^{i}_{WB} \cdot \prod^{j-1}_{k=i} \left[ \hat{R}^{m}_{k} \cdot \mathrm{Exp}(-J_{r}(\hat{\mathbf{\theta}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t) \right]) \\
    &=
-   \mathrm{Log}({R^{i}_{WB}}^{\top} \cdot R^{j}_{WB} \cdot \hat{R}^{m}_{i,j-1} \cdot
+   \mathrm{Log}({R^{j}_{WB}}^{\top} \cdot R^{i}_{WB} \cdot \hat{R}^{m}_{i,j-1} \cdot
    \prod_{k=i}^{j-1}
-   \mathrm{Exp}({\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t)) \\
+   \mathrm{Exp}(-{\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\theta}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t)) \\
 
-さて、任意の :math:`\mathbf{x}\in\mathrm{R}^{3}` に対して :math:`||J_{r}(\hat{\mathbf{\omega}}^{m}_{k})\mathbf{x}|| \leq ||\mathbf{x}||` となる(参考: `行列ノルム`_)ので、次が成り立つ。
+さて、任意の :math:`\mathbf{x}\in\mathrm{R}^{3}` に対して :math:`||J_{r}(\hat{\mathbf{\theta}}^{m}_{k})\mathbf{x}|| \leq ||\mathbf{x}||` となる(参考: `行列ノルム`_)ので、次が成り立つ。
 
 .. math::
-   ||{\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t|| = ||J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t|| \leq ||\Delta \hat{\mathbf{b}}^{\omega} \Delta t||
+   ||{\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\theta}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t|| = ||J_{r}(\hat{\mathbf{\theta}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t|| \leq ||\Delta \hat{\mathbf{b}}^{\omega} \Delta t||
 
 また、 :math:`\mathbf{a}, \mathbf{b} \in \mathrm{R}^{3}` について、これらのノルムが十分に小さいとき、次が成り立つ
 
@@ -230,36 +231,36 @@ IMU座標系(ボディ座標系)とカメラ座標系の間の回転を :math:`R
 .. math::
     \mathbf{r}_{ij}(\hat{\mathbf{b}}^{\omega} + \Delta \hat{\mathbf{b}}^{\omega})
    &\approx
-   \mathrm{Log}({R^{i}_{WB}}^{\top} \cdot R^{j}_{WB} \cdot \hat{R}^{m}_{i,j-1} \cdot
-   \mathrm{Exp}(\sum_{k=i}^{j-1} {\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t)) \\
+   \mathrm{Log}({R^{j}_{WB}}^{\top} \cdot R^{i}_{WB} \cdot \hat{R}^{m}_{i,j-1} \cdot
+   \mathrm{Exp}(-\sum_{k=i}^{j-1} {\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\theta}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t)) \\
 
 ベクトル :math:`\mathbf{a} \in \mathbb{R}^{3}` と微小量 :math:`\Delta \mathbf{a} \in \mathbb{R}^{3}` の間には次の関係が成り立つ。
 
 .. math::
    \mathrm{Log}(\mathrm{Exp}(\mathbf{a})\mathrm{Exp}(\Delta \mathbf{a})) = \mathbf{a} + J_{r}^{-1}(\mathbf{a})\Delta \mathbf{a}
 
-:math:`\mathbf{\xi}_{ij} = \mathrm{Log}({R^{i}_{WB}}^{\top} \cdot R^{j}_{WB} \cdot \hat{R}^{m}_{i,j-1})` としてこの関係性を利用すると、Gauss-Newton 法の Jacobian が導出できる。
+:math:`\mathbf{\xi}_{ij} = \mathrm{Log}({R^{j}_{WB}}^{\top} \cdot R^{i}_{WB} \cdot \hat{R}^{m}_{i,j-1})` としてこの関係性を利用すると、Gauss-Newton 法の Jacobian が導出できる。
 
 .. math::
     \mathbf{r}_{ij}(\hat{\mathbf{b}}^{\omega} + \Delta \hat{\mathbf{b}}^{\omega})
    &\approx
    \mathrm{Log}(\mathrm{Exp}(\mathbf{\xi}_{ij}) \cdot
-   \mathrm{Exp}(\sum_{k=i}^{j-1} {\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t)) \\
+   \mathrm{Exp}(-\sum_{k=i}^{j-1} {\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\theta}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t)) \\
    &\approx
-   \mathbf{\xi}_{ij} +
+   \mathbf{\xi}_{ij} -
    J_{r}^{-1}(\mathbf{\xi}_{ij})\left[
-   \sum_{k=i}^{j-1} {\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t
+   \sum_{k=i}^{j-1} {\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\theta}}^{m}_{k}) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t
    \right ] \\
    &=
-   \mathbf{\xi}_{ij} +
+   \mathbf{\xi}_{ij} -
    \Delta t \cdot J_{r}^{-1}(\mathbf{\xi}_{ij}) \left[
-   \sum_{k=i}^{j-1} {\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{k})
+   \sum_{k=i}^{j-1} {\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\theta}}^{m}_{k})
    \right ] \cdot \Delta \hat{\mathbf{b}}^{\omega}  \\
    &=
-   \mathbf{\xi}_{ij} +
+   \mathbf{\xi}_{ij} -
    J_{ij} \cdot \Delta \hat{\mathbf{b}}^{\omega}, \\
    \text{where} \;\; J_{ij} &=  \Delta t \cdot J_{r}^{-1}(\mathbf{\xi}_{ij}) \left[
-   \sum_{k=i}^{j-1} {\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\omega}}^{m}_{k})
+   \sum_{k=i}^{j-1} {\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\theta}}^{m}_{k})
    \right]
 
 :math:`\mathrm{SO}(3)` の Right Jacobian
