@@ -1,6 +1,6 @@
-======================
-角速度バイアス推定方法
-======================
+=========================
+IMU角速度バイアス推定方法
+=========================
 
 :著者: 石田 岳志
 
@@ -10,8 +10,7 @@
 IMUは低価格かつ小型のオドメトリ推定プラットフォームを構築するために有用である。また、LiDARやカメラに対する補完的特性により、それらと組み合わせて利用することで高精度な位置推定を実現することができる。一方で観測値にバイアスが乗るため、正確なオドメトリ推定を実現するには、観測値に対してバイアス補正を行う必要がある。
 ここではIMUの観測値のうち角速度に対するバイアス補正手法を紹介する。
 
-
-ここではLiDARやカメラなどで地図上での位置を把握できること、あるいはある時間間隔におけるセンサの移動量を観測できることを仮定する。本手法ではどちらを使ってもよいので、ひとまずカメラを用いることとしよう。
+本稿ではLiDARやカメラなどで地図上での位置を把握できることを仮定する。本稿で紹介する手法では LiDAR とカメラのどちらを使ってもよいので、ひとまずカメラを用いることとしよう。
 
 IMU座標系(ボディ座標系)とカメラ座標系の間の回転を :math:`R_{CB} \in \mathbb{R}^{3}` とする。一般的に、位置推定を行っている間はIMUとカメラの位置関係は変わらないため、 :math:`R_{CB}` は不変な値として扱われる。
 時刻 :math:`i` に得られたカメラ座標系からワールド座標系への回転を :math:`R^{i}_{WC} \in \mathbb{R}^{3}` とする。
@@ -71,7 +70,7 @@ IMU座標系(ボディ座標系)とカメラ座標系の間の回転を :math:`R
 .. math::
    \mathbf{\eta}^{\omega}_{k} \sim \mathcal{N}(\mathbf{0}, Q^{\omega}), \; Q^{\omega} \in \mathbb{R}^{3 \times 3}
 
-| IMUは半導体なので、真の値に対してバイアスが乗ってしまう。また、バイアスの要因は周囲の温度変化などであるため、バイアスの値そのものも時間変化する。しかしながら、バイアス推定に必要なIMUおよびカメラの観測値は数秒〜十数秒ぶんあれば十分であるため、この時間間隔においてはバイアスが一定値であることを仮定する。時刻を表す添字を除去して :math:`\mathbf{b}^{\omega}_{k} = \mathbf{b}^{\omega}` と表記することにしよう。以上を踏まえて真の観測値 :math:`\mathbf{\omega}_{k}` を記述する。
+| IMUは半導体なので、真の値に対してバイアスが乗ってしまう。また、バイアスの主要因はIMU周辺の温度変化であるため、バイアスの値そのものも時間変化する。しかしながら、バイアス推定に必要なIMUおよびカメラの観測値は数秒〜十数秒ぶんあれば十分であることから、この時間間隔においてはバイアスが一定値であることを仮定できる。バイアスが時刻によらず一定であるという仮定をおき、時刻を表す添字を除去して :math:`\mathbf{b}^{\omega}_{k} = \mathbf{b}^{\omega}` と表記することにしよう。以上を踏まえて真の観測値 :math:`\mathbf{\omega}_{k}` を記述する。
 
 .. math::
     \mathbf{\omega}_{k} = \mathbf{\omega}^{m}_{k} - \mathbf{b}^{\omega} - \mathbf{\eta}^{\omega}_{k}
@@ -133,20 +132,20 @@ IMU座標系(ボディ座標系)とカメラ座標系の間の回転を :math:`R
 
 が成立する。したがって、式 :eq:`error-function` の :math:`\mathrm{Exp}` の積に対して指数法則を適用することができない。
 
-| 一方で、一般に :math:`||\mathbf{b}||` が小さいとき、リー代数の和の指数写像は次のように近似できる
+| 一方で、一般に :math:`||\mathbf{b}||` が小さいとき、リー代数の和の指数写像は次のように近似できる。
 
 .. math::
    \mathrm{Exp}(\mathbf{a} + \mathbf{b}) \approx \mathrm{Exp}(\mathbf{a}) \cdot \mathrm{Exp}(J_{r}(\mathbf{a}) \cdot \mathbf{b})
 
-が成立する。ここで :math:`J_{r}` は right Jacobian と呼ばれるものであり、解析的に計算できる。
+ここで :math:`J_{r}` は right Jacobian と呼ばれるものであり、解析的に計算できる。
 
-これを利用すると、残差 :math:`\mathbf{r}_{ij}` は
+これを利用すると、残差 :math:`\mathbf{r}_{ij}` は次のように書ける。
 
 .. math::
    \mathbf{r}_{ij}(\hat{\mathbf{b}}^{\omega} + \Delta \hat{\mathbf{b}}^{\omega})
    \approx \mathrm{Log}({R^{j}_{WB}}^{\top} \cdot R^{i}_{WB} \cdot \prod^{j-1}_{k=i}\mathrm{Exp}(\hat{\mathbf{\omega}}^{m}_{k} \Delta t)\cdot \mathrm{Exp}(-J_{r}(\hat{\mathbf{\omega}}^{m}_{k} \Delta t) \cdot \Delta \hat{\mathbf{b}}^{\omega} \Delta t))
 
-と書ける。読みやすさのために :math:`\hat{R}^{m}_{k} = \mathrm{Exp}(\hat{\mathbf{\omega}}^{m}_{k} \Delta t), \; \hat{\mathbf{\theta}}^{m}_{k} = \hat{\mathbf{\omega}}^{m}_{k} \Delta t` とおこう。
+読みやすさのために :math:`\hat{R}^{m}_{k} = \mathrm{Exp}(\hat{\mathbf{\omega}}^{m}_{k} \Delta t), \; \hat{\mathbf{\theta}}^{m}_{k} = \hat{\mathbf{\omega}}^{m}_{k} \Delta t` とおこう。
 
 .. math::
    \mathbf{r}_{ij}(\hat{\mathbf{b}}^{\omega} + \Delta \hat{\mathbf{b}}^{\omega})
@@ -264,6 +263,8 @@ IMU座標系(ボディ座標系)とカメラ座標系の間の回転を :math:`R
    \text{where} \;\; J_{ij} &=  \Delta t \cdot J_{r}^{-1}(\mathbf{\xi}_{ij}) \left[
    \sum_{k=i}^{j-1} {\hat{R}^{m}_{k+1,j-1}}^{\top}\cdot J_{r}(\hat{\mathbf{\theta}}^{m}_{k})
    \right]
+
+あとは Gauss-Newton 法の更新式を用いて角速度バイアスの推定値を更新していけばよい。
 
 :math:`\mathrm{SO}(3)` の Right Jacobian
 ========================================
