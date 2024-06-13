@@ -6,9 +6,17 @@
 
 1. Sai Veerya Mahadevan, Yuuki Takano, and Atsuko Miyaji, "PRSafe: A Domain Specific Language Created with LLVM", IPSJ, Electronic Preprint for Journal of Information Processing Vol.32, Feb. 2024
 
+### 国際会議（査読あり）
+
+1. Ryuta Kambe, Benjamin Gilby, Yuuki Takano, "A Formally Verified Leader Election Algorithm for Autonomous Driving System", the 30th IEEE International Conference on Embedded and Real-Time Computing Systems and Applications (RTCSA 2024), Aug. 2024
+
 ### 国内研究会
 
 1. Joe Hattori, Yuuki Takano, and Naoki Kobayashi, "Towards Automatic Verification of Concurrency Memory Bug Freeness of Linux Kernel Modules by Transpilation to PlusCal", 研究報告システムソフトウェアとオペレーティング・システム（OS）, Feb. 2024
+
+### その他発表
+
+1. 高野 祐輝, 神戸 隆太, "自動運転システムと形式検証", JAIST 第1回 FMAPセミナー, 2024年5月, [link](https://www.jaist.ac.jp/project/crest_fmap/en/?news=the-1st-fmap-seminar)
 
 ## 2023年
 
