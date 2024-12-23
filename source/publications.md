@@ -9,6 +9,7 @@
 ### 国際会議（査読あり）
 
 1. Ryuta Kambe, Benjamin Gilby, Yuuki Takano, "A Formally Verified Leader Election Algorithm for Autonomous Driving System", the 30th IEEE International Conference on Embedded and Real-Time Computing Systems and Applications (RTCSA 2024), Aug. 2024
+2. Atsushi Yano, Takuya Azumi, "Work-in-Progress: Multi-Deadline DAG Scheduling Model for Autonomous Driving Systems", the 45th IEEE Real-Time Systems Symposium (RTSS), Dec. 2024
 
 ### 国内研究会
 
