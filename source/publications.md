@@ -12,6 +12,8 @@
 
 ### その他発表
 
+1. Akira Hasegawa, Ryuta Kambe, Toshiaki Aoki, Yuuki Takano, "A Case Study on Model Checking and Runtime Verification for Awkernel", arXiv:2503.09282, Mar. 2025
+
 ## 2024年
 
 ### 論文誌（査読あり）
